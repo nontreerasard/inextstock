@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iNEXT Stock System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="stylefirst.css">
+</head>
+<body>
+    <header>
+        <h1>iNEXTBroadband Stock</h1>
+    </header>
+
+    <main class="main">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="🔍 ค้นหาอุปกรณ์...">
+        </div>
+        
+        <div id="stockStats" class="stats-container">
+            <!-- จะถูกเติมด้วย JavaScript -->
+        </div>
+        
+        <div class="category-grid">
+            <!-- จะถูกเติมด้วย JavaScript -->
+        </div>
+        
+        <!-- Modal สำหรับแสดงรายละเอียด -->
+        <div id="detailModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 id="modalTitle"></h2>
+                <!-- เพิ่มช่องค้นหา -->
+                <div class="search-container">
+                    <input type="text" id="modalSearch" placeholder="🔍 ค้นหา Serial Number, ผู้ยืม...">
+                </div>
+                <div id="modalContent"></div>
+            </div>
+        </div>
+        <!-- Modal สำหรับฟอร์มยืม -->
+        <div id="borrowModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>ฟอร์มยืมอุปกรณ์</h2>
+                <form id="borrowForm">
+                    <div class="form-group">
+                        <label>Serial Number:</label>
+                        <input type="text" id="serialNumber" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>รหัสผู้ยืม:</label>
+                        <input type="text" id="borrowerId" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ชื่อผู้ยืม:</label>
+                        <input type="text" id="borrowerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>วันที่ยืม:</label>
+                        <input type="date" id="borrowDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>กำหนดคืน:</label>
+                        <input type="date" id="returnDate" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="submit-btn">ยืนยันการยืม</button>
+                        <button type="button" class="cancel-btn" onclick="closeBorrowModal()">ยกเลิก</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="scriptfirst.js"></script>
+</body>
+</html>
