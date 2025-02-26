@@ -1,3 +1,19 @@
+import { collection, getDocs, query, where, updateDoc, doc } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM Content Loaded");
+    
+    // ตรวจสอบว่า Firebase พร้อมใช้งาน
+    if (window.db) {
+        console.log("Firebase is available");
+        loadEquipmentSummary();
+        setupSearch();
+    } else {
+        console.error("Firebase is not initialized!");
+        alert("ไม่สามารถเชื่อมต่อกับฐานข้อมูลได้");
+    }
+});
+
 // Add functions to window object for onclick access
 window.viewModelDetails = viewModelDetails;
 window.borrowEquipment = borrowEquipment;
@@ -11,27 +27,20 @@ window.closeBorrowModal = function() {
     }
 };
 
-// โหลดข้อมูลสรุป
+// ปรับปรุงฟังก์ชัน loadEquipmentSummary
 async function loadEquipmentSummary() {
     try {
-        console.log("Starting to load equipment summary...");
-        
-        // เพิ่มการตรวจสอบ db
-        if (!firebase.firestore || !db) {
-            throw new Error('Firestore is not initialized');
-        }
+        const querySnapshot = await getDocs(collection(window.db, 'products'));
+        console.log("Got snapshot with size:", querySnapshot.size);
 
-        const snapshot = await db.collection('products').get();
-        console.log("Got snapshot with size:", snapshot.size);
-
-        if (snapshot.empty) {
+        if (querySnapshot.empty) {
             console.log("No documents found in 'products' collection");
             return;
         }
 
         const data = {};
         
-        snapshot.forEach(doc => {
+        querySnapshot.forEach(doc => {
             const item = doc.data();
             console.log("Processing document:", item);
 
