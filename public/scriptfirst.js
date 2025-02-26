@@ -1,23 +1,8 @@
-// แก้ไข Firebase config
-const firebaseConfig = {
-    apiKey: "AIzaSyApN2OxPBW-fH4MpYqzUNxZvTAGm78k1Zw",
-    authDomain: "inextstock-65678.firebaseapp.com",
-    projectId: "inextstock-65678",
-    storageBucket: "inextstock-65678.appspot.com",
-    messagingSenderId: "507532765169",
-    appId: "1:507532765169:web:18e6a5ec9514cb1b6d8650",
-    measurementId: "G-06RZXCRN97"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM Content Loaded");
     
     // ตรวจสอบว่า Firebase พร้อมใช้งาน
-    if (typeof firebase !== 'undefined' && firebase.firestore) {
+    if (typeof firebase !== 'undefined' && firebase.firestore && db) {
         console.log("Firebase is available");
         loadEquipmentSummary();
         setupSearch();

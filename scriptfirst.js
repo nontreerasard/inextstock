@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM Content Loaded");
     
     // ตรวจสอบว่า Firebase พร้อมใช้งาน
-    if (typeof firebase !== 'undefined' && firebase.firestore) {
+    if (typeof firebase !== 'undefined' && firebase.firestore && db) {
         console.log("Firebase is available");
         loadEquipmentSummary();
         setupSearch();
