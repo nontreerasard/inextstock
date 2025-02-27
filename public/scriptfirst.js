@@ -1,8 +1,19 @@
+import { 
+    collection, 
+    getDocs,
+    query, 
+    where, 
+    updateDoc,
+    doc,
+    getDoc,
+    setDoc,
+} from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("DOM Content Loaded");
     
     // ตรวจสอบว่า Firebase พร้อมใช้งาน
-    if (typeof firebase !== 'undefined' && firebase.firestore && db) {
+    if (window.db) {
         console.log("Firebase is available");
         loadEquipmentSummary();
         setupSearch();
@@ -25,29 +36,28 @@ window.closeBorrowModal = function() {
     }
 };
 
-// โหลดข้อมูลสรุป
+
+// ปรับปรุงฟังก์ชัน loadEquipmentSummary
 async function loadEquipmentSummary() {
-    try {
-        console.log("Starting to load equipment summary...");
+    try {        
+        console.log("Starting loadEquipmentSummary...");
+        console.log("window.db:", window.db);
         
-        // เพิ่มการตรวจสอบ db
-        if (!firebase.firestore || !db) {
-            throw new Error('Firestore is not initialized');
-        }
+        const productsRef = collection(window.db, 'products');
+        const querySnapshot = await getDocs(productsRef);
+        
+        console.log("Query snapshot:", querySnapshot.size);
 
-        const snapshot = await db.collection('products').get();
-        console.log("Got snapshot with size:", snapshot.size);
-
-        if (snapshot.empty) {
-            console.log("No documents found in 'products' collection");
+        if (querySnapshot.empty) {
+            console.log("No documents found");
             return;
         }
 
         const data = {};
         
-        snapshot.forEach(doc => {
+        querySnapshot.forEach(doc => {
             const item = doc.data();
-            console.log("Processing document:", item);
+            console.log("Document data:", item);
 
             // ใช้ค่าเริ่มต้นสำหรับ category ถ้าไม่มี
             const category = 'รายชื่ออุปกรณ์'; // ใช้ค่าเริ่มต้นเลย
@@ -86,7 +96,7 @@ async function loadEquipmentSummary() {
 
         displaySummary(data);
     } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('Error in loadEquipmentSummary:', error);
         alert('ไม่สามารถโหลดข้อมูลได้: ' + error.message);
     }
 }
@@ -155,9 +165,15 @@ function setupSearch() {
 // แก้ไขฟังก์ชัน viewModelDetails เพื่อรักษาค่าการค้นหาค่าการค้นหา
 async function viewModelDetails(modelName) {
     try {
-        const snapshot = await db.collection('products')
-            .where('model', '==', modelName)
-            .get();
+        // ใช้ Firebase v9 syntax
+        const productsRef = collection(window.db, 'products');
+        const q = query(productsRef, where('model', '==', modelName));
+        const snapshot = await getDocs(q);
+        
+        if (snapshot.empty) {
+            console.log("No devices found for model:", modelName);
+            return;
+        }
         
         const data = snapshot.docs.map(doc => ({
             id: doc.id,
@@ -285,17 +301,18 @@ async function borrowEquipment(serialNumber) {
 // แก้ไขฟังก์ชัน returnEquipment
 async function returnEquipment(serialNumber) {
     try {
-        // ค้นหาอุปกรณ์ที่จะคืน
-        const snapshot = await db.collection('products')
-            .where('serial_number', '==', serialNumber)
-            .get();
+        // ค้นหาอุปกรณ์ที่จะคืน - ใช้ Firebase v9 syntax
+        const productsRef = collection(window.db, 'products');
+        const q = query(productsRef, where('serial_number', '==', serialNumber));
+        const snapshot = await getDocs(q);
 
         if (snapshot.empty) {
             throw new Error('ไม่พบอุปกรณ์นี้');
         }
 
-        // อัพเดทข้อมูล
-        await snapshot.docs[0].ref.update({
+        // อัพเดทข้อมูล - ใช้ Firebase v9 syntax
+        const docRef = doc(window.db, 'products', snapshot.docs[0].id);
+        await updateDoc(docRef, {
             borrower_id: null,
             borrower_name: null,
             borrow_date: null,
@@ -346,15 +363,18 @@ document.getElementById('borrowForm')?.addEventListener('submit', async function
             throw new Error('วันที่คืนต้องมากกว่าวันที่ยืม');
         }
 
-        const snapshot = await db.collection('products')
-            .where('serial_number', '==', formData.serial_number)
-            .get();
+        // ใช้ Firebase v9 syntax
+        const productsRef = collection(window.db, 'products');
+        const q = query(productsRef, where('serial_number', '==', formData.serial_number));
+        const snapshot = await getDocs(q);
 
         if (snapshot.empty) {
             throw new Error('ไม่พบอุปกรณ์นี้');
         }
 
-        await snapshot.docs[0].ref.update({
+        // อัพเดทข้อมูล - ใช้ Firebase v9 syntax
+        const docRef = doc(window.db, 'products', snapshot.docs[0].id);
+        await updateDoc(docRef, {
             borrower_id: formData.borrower_id,
             borrower_name: formData.borrower_name,
             borrow_date: formData.borrow_date,
