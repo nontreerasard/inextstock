@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iNEXT Stock System</title>
     
-    <!-- Update to Firebase SDK v9 -->
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="stylefirst.css">
+    
+    <!-- Import Firebase modules -->
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.0.0/firebase-analytics.js";
 
-        // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyApN2OxPBW-fH4MpYqzUNxZvTAGm78k1Zw",
             authDomain: "inextstock-65678.firebaseapp.com",
             projectId: "inextstock-65678",
-            storageBucket: "inextstock-65678.firebasestorage.app",
+            storageBucket: "inextstock-65678.appspot.com",
             messagingSenderId: "507532765169",
             appId: "1:507532765169:web:18e6a5ec9514cb1b6d8650",
             measurementId: "G-06RZXCRN97"
@@ -25,28 +26,29 @@
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const db = getFirestore(app);
-        
-        // Make db available globally
         window.db = db;
-        
+
         // Test connection
         async function testConnection() {
             try {
                 const querySnapshot = await getDocs(collection(db, 'products'));
-                console.log('Firestore connected successfully');
-                console.log('Documents found:', querySnapshot.size);
+                console.log('Connection test:', {
+                    success: true,
+                    documentsFound: querySnapshot.size,
+                    sampleDoc: querySnapshot.docs[0]?.data()
+                });
             } catch (error) {
-                console.error('Firestore connection error:', error);
+                console.error('Connection test failed:', error);
             }
         }
-        
+
+        // Run test when page loads
         testConnection();
     </script>
-
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="stylefirst.css">
+    
+    <!-- Your main script -->
+    <script type="module" src="scriptfirst.js"></script>
 </head>
 <body>
     <header>
@@ -109,7 +111,5 @@
         </div>
     </main>
 
-    <!-- ย้าย script ไปไว้ท้าย body -->
-    <script src="scriptfirst.js"></script>
 </body>
 </html>
